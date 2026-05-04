@@ -1,0 +1,19 @@
+{
+  "name": "sentia-telegram-bot",
+  "version": "1.0.0",
+  "description": "Sentia AI Agent Wallet - Telegram Bot",
+  "main": "src/bot.js",
+  "scripts": {
+    "start": "node src/bot.js",
+    "dev": "node --watch src/bot.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@solana/web3.js": "^1.98.0",
+    "axios": "^1.15.2",
+    "bs58": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.66.0",
+    "tweetnacl": "^1.0.3"
+  }
+}

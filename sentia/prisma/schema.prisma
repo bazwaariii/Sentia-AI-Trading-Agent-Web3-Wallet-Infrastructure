@@ -1,0 +1,69 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  pin       String?
+  createdAt DateTime @default(now())
+
+  // Real Solana Wallet for Hackathon Demo
+  walletAddress    String?
+  walletPrivateKey String?
+
+  // Global Limits
+  defaultMaxPerTx Int @default(10)
+  defaultDailyLimit Int @default(100)
+  monthlyBudgetCap Int @default(2000)
+
+  // Webhook settings
+  webhookUrl      String?
+  telegramChatId  String?
+
+  agents        Agent[]
+  transactions  Transaction[]
+}
+
+model Agent {
+  id          String   @id @default(uuid())
+  name        String
+  pubkey      String
+  spent       Float    @default(0)
+  limit       Float    @default(500)
+  maxPerTx    Float    @default(10)
+  dailyLimit  Float    @default(100)
+  txCount     Int      @default(0)
+  status      String   @default("active") // active, pending, rejected
+  lastActive  DateTime @default(now())
+  
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  type        String
+  amount      Float
+  token       String   @default("USDC")
+  status      String   @default("pending") // pending, approved, rejected
+  toAddress   String
+  hash        String   @default("pending")
+  createdAt   DateTime @default(now())
+
+  agentId     String
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
